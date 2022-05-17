@@ -1,0 +1,29 @@
+.card {
+    .card-body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .action {
+            display: flex;
+            align-items: center;
+
+            a {
+                display: block;
+                margin-right: 20px;
+
+                i {
+                    color: #FFFFFF;
+                }
+                
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    } 
+} 
+
+.none {
+    display: none;
+}

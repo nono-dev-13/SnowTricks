@@ -1,0 +1,18 @@
+{% for article in articles %}
+<div class="col-12 col-md-3 mb-3" id="{{article.id}}">
+	<div class="card">
+		<img src="..." class="card-img-top" alt="...">
+		<div class="card-body">
+			<h5 class="card-title">{{article.name}}</h5>
+			<div class="action">
+				<a href="#">
+					<i class="fas fa-pencil-alt"></i>
+				</a>
+				<a href="#">
+					<i class="fas fa-trash-alt"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}

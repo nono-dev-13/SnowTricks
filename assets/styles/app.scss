@@ -4,6 +4,11 @@
         align-items: center;
         justify-content: space-between;
 
+        .card-title {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+
         .action {
             display: flex;
             align-items: center;
@@ -26,4 +31,23 @@
 
 .none {
     display: none;
+}
+
+.background {
+    background-image: url("../images/img_top.jpeg");
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height: 600px;
+    background-size: cover;
+    position: absolute;
+    z-index: -1;
+    left: 0;
+}
+
+.mt-300 {
+    margin-top: 300px;
+}
+
+.bg-dark {
+    --bs-bg-opacity :.7;
 }

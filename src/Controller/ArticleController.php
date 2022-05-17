@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -44,5 +46,16 @@ class ArticleController extends AbstractController
             'articlesTotal' => $articlesTotal
         ]);
 
+    }
+
+    /**
+     * Montre un article
+     */
+    #[Route("/show/{id}", name: "article_show", requirements: ['id' => '\d+'])]
+    public function show(Article $article, Request $request)
+    {
+        return $this->render('article/show.html.twig', [
+            'article'=> $article,
+        ]);
     }
 }

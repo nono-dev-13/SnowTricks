@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des figures{% endblock %}
+
+{% block body %}
+<div class="background"></div>
+<div class="container mt-300">
+    <div class="row">
+        <div class="col-12">
+            <div class="p-5 mb-4 rounded-5 bg-dark">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">{{article.name | capitalize}}</h1>
+                    <p class="col-md-8 fs-4">{{article.description | capitalize}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

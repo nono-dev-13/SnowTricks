@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des figures{% endblock %}
+{% block title %}Liste des tricks{% endblock %}
 
 {% block body %}
 <div class="background"></div>
-<div class="container mt-300">
+<div class="container">
     <div class="row">
+        {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row mt-300">
         <div class="col-12">
             <div class="p-5 mb-4 rounded-5 bg-dark">
                 <div class="container-fluid py-5">

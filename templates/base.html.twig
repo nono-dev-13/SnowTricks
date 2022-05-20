@@ -33,17 +33,20 @@
 			<div class="collapse navbar-collapse justify-content-end" id="navbar">
 				<ul class="navbar-nav">
 					<li class="nav-item">
-						<a class="nav-link active" href="/">Home</a>
+						<a class="nav-link active" href="/">Accueil</a>
+					</li>
+					{% if app.user %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{path('app_logout')}}">Se déconnecter</a>
+					</li>
+					{% else %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{path('app_login')}}">Connexion</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#">Features</a>
+						<a class="nav-link" href="{{path('app_register')}}">S'inscrire</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">Pricing</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">About</a>
-					</li>
+					{% endif%}
 				</ul>
 			</div>
 		</div>
@@ -51,7 +54,7 @@
 	{% block body %}{% endblock %}
 	<div class="container">
 		<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-			<p class="col-md-4 mb-0 text-muted">&copy; 2022 Company, Inc</p>
+			<p class="col-md-4 mb-0 text-muted">&copy; 2022 Tricks, Inc</p>
 
 			<a href="/"
 				class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
@@ -62,20 +65,20 @@
 
 			<ul class="nav col-md-4 justify-content-end">
 				<li class="nav-item">
-					<a href="#" class="nav-link px-2 text-muted">Home</a>
+					<a class="nav-link px-2 text-muted" href="/">Accueil</a>
+				</li>
+				{% if app.user %}
+				<li class="nav-item">
+					<a class="nav-link px-2 text-muted" href="{{path('app_logout')}}">Se déconnecter</a>
+				</li>
+				{% else %}
+				<li class="nav-item">
+					<a class="nav-link px-2 text-muted" href="{{path('app_login')}}">Connexion</a>
 				</li>
 				<li class="nav-item">
-					<a href="#" class="nav-link px-2 text-muted">Features</a>
+					<a class="nav-link px-2 text-muted" href="{{path('app_register')}}">S'inscrire</a>
 				</li>
-				<li class="nav-item">
-					<a href="#" class="nav-link px-2 text-muted">Pricing</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="nav-link px-2 text-muted">FAQs</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="nav-link px-2 text-muted">About</a>
-				</li>
+				{% endif%}
 			</ul>
 		</footer>
 	</div>

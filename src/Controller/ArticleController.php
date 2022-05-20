@@ -67,7 +67,7 @@ class ArticleController extends AbstractController
      */
     #[Route("/trick/new", name: "trick_create")]
     #[Route("/trick/{id}/edit", name: "trick_edit")]
-    public function formArticle(Article $article=null, Request $request, EntityManagerInterface $manager)
+    public function formArticle(Request $request, EntityManagerInterface $manager, Article $article=null)
     {
         if(!$article){
             $article = new Article();

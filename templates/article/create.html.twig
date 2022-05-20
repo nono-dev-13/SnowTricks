@@ -5,12 +5,24 @@
 {% block body %}
 <div class="container">
     <div class="row mt-5">
+        {% if editMode %}
+        <h1 class="mb-3">Modification d'un tricks</h1>
+        {% else %}
         <h1 class="mb-3">Création d'un tricks</h1>
+        {% endif %}
+
         {{form_start(formArticle)}}
 
         {{form_row(formArticle.name)}}
         {{form_row(formArticle.description)}}
+
+        {% if editMode %}
+        <button type="submit" class="btn btn-primary">Modifier l'article</button>
+
+        {% else %}
         <button type="submit" class="btn btn-primary">Ajouter l'article</button>
+
+        {% endif %}
 
         {{form_end(formArticle)}}
     </div>

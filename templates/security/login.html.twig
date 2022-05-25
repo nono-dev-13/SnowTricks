@@ -13,9 +13,18 @@
         You are logged in as {{ app.user.email }}, <a href="{{ path('app_logout') }}">Logout</a>
     </div>
     {% endif %}
+
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{message}}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('warning') %}
+    <div class="alert alert-warning">{{message}}</div>
+    {% endfor %}
+
     <div class="container">
         <div class="row my-5">
-            <div class="col-12 col-md-4 offset-md-4">
+            <div class="col-12 col-lg-4 offset-lg-4">
                 <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
                 <div class="form-floating mb-3">
                     <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control"
@@ -27,6 +36,9 @@
                     <input type="password" name="password" id="inputPassword" class="form-control"
                         placeholder="mot de passe" required>
                     <label for="inputPassword">Mot de passe</label>
+                </div>
+                <div class="mb-3">
+                    <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

@@ -3,6 +3,13 @@
 {% block title %}Liste des figures{% endblock %}
 
 {% block body %}
+<div class="row">
+	{% for message in app.flashes('success') %}
+	<div class="alert alert-success text-center">
+		{{ message }}
+	</div>
+	{% endfor %}
+</div>
 <div class="mb-4">
 	<img src="{{ asset('build/images/img_top.jpeg') }}" class="w-100" />
 </div>
@@ -13,14 +20,14 @@
 			<div class="card">
 				<img src="..." class="card-img-top" alt="...">
 				<div class="card-body">
-					<a href="{{ path('trick_show', {id: article.id}) }}" class="card-title h5">
+					<a href="{{ path('trick_show', {id : article.id}) }}" class="card-title h5">
 						{{article.name|capitalize}}
 					</a>
 					<div class="action">
-						<a href="#">
+						<a href="{{ path('trick_edit', {id : article.id}) }}">
 							<i class="fas fa-pencil-alt"></i>
 						</a>
-						<a href="#">
+						<a href="{{ path('trick_delete', {id : article.id}) }}" id="modal-delete">
 							<i class="fas fa-trash-alt"></i>
 						</a>
 					</div>

@@ -116,4 +116,18 @@ class ArticleController extends AbstractController
             'article'=> $article,
         ]);
     }
+
+    /**
+     * Supprimer un article
+     */
+    #[Route("/delete-trick/{id}", name: "trick_delete")]
+    public function delete(Article $article, EntityManagerInterface $manager):Response
+    {
+        $articles = $manager->getRepository(Article::class)->find($article->getId());
+        $manager->remove($articles);
+        $manager->flush();
+
+        $this->addFlash('success', 'Votre article à bien été supprimé');
+        return $this->redirectToRoute('home');
+    }
 }

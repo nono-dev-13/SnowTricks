@@ -32,10 +32,10 @@
 
 			<div class="collapse navbar-collapse justify-content-end" id="navbar">
 				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link active" href="/">Accueil</a>
-					</li>
 					{% if app.user %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{path('trick_create')}}">Créer un article</a>
+					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{{path('app_logout')}}">Se déconnecter</a>
 					</li>
@@ -68,6 +68,9 @@
 					<a class="nav-link px-2 text-muted" href="/">Accueil</a>
 				</li>
 				{% if app.user %}
+				<li class="nav-item">
+					<a class="nav-link px-2 text-muted" href="{{path('trick_create')}}">Créer un article</a>
+				</li>
 				<li class="nav-item">
 					<a class="nav-link px-2 text-muted" href="{{path('app_logout')}}">Se déconnecter</a>
 				</li>

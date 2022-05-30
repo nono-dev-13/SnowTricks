@@ -17,6 +17,22 @@
         {{form_row(formArticle.description)}}
 
         {% if editMode %}
+        {{form_row(formArticle.image, {'required' : false})}}
+        {% endif %}
+
+        {{form_row(formArticle.image)}}
+
+        {% if editMode %}
+        <div class="mb-5">
+            <h4>Images</h4>
+            <div class="d-flex">
+                {% for image in article.image %}
+                <div>
+                    <img src="{{asset('/uploads' ~image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">Modifier l'article</button>
 
         {% else %}

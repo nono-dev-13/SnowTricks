@@ -18,7 +18,9 @@
 		{% for article in listArticles %}
 		<div class="col-12 col-md-3 mb-3" id="{{article.id}}">
 			<div class="card">
-				<img src="..." class="card-img-top" alt="...">
+				{% if article.images|length > 0 %}
+				<img src="{{asset('/uploads/' ~ article.images[0].name)}}" class="card-img-top" alt="image">
+				{% endif %}
 				<div class="card-body">
 					<a href="{{ path('trick_show', {id : article.id}) }}" class="card-title h5">
 						{{article.name|capitalize}}

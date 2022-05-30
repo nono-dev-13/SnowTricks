@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\Image;
 use App\Form\ArticleType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
@@ -98,6 +99,24 @@ class ArticleController extends AbstractController
         
         if($formArticle->isSubmitted() and $formArticle->isValid()) {
             
+            //upload image
+            $images = $formArticle->get('image')->getData();
+            foreach($images as $image) {
+                //génère un nouveau nom de fichier
+                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+                //copie le fichier dans uploads
+                $image->move(
+                    $this->getParameter('images-directory'),
+                    $fichier
+                );
+
+                //on stock l'image en bdd (son nom)
+                $img = new Image();
+                $img->setName($fichier);
+                $article->addImage($img);
+            }
+
             if(!$article->getId()) {
                 $article->setCreatedAt(new \DateTimeImmutable());
             }

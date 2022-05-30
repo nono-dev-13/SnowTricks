@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleType;
+use App\Form\CommentType;
 use App\Repository\ArticleRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
@@ -55,10 +57,28 @@ class ArticleController extends AbstractController
      * Montre un article
      */
     #[Route("/show/{id}", name: "trick_show", requirements: ['id' => '\d+'])]
-    public function show(Article $article, Request $request)
+    public function show(Article $article,EntityManagerInterface $manager, Request $request)
     {
+
+        //Commentaires
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if($commentForm->isSubmitted() && $commentForm->isValid()){
+            $comment->setCreatedAt(new \DateTimeImmutable());
+            $comment->setArticle($article);
+
+            $manager->persist($comment);
+            $manager->flush();
+
+            $this->addFlash('success', 'Votre commentaire à bien été envoyé');
+            return $this->redirectToRoute('trick_show', ['id' => $article->getId()]);
+        }
+
         return $this->render('article/show.html.twig', [
             'article'=> $article,
+            'commentForm' => $commentForm->createView(),
         ]);
     }
 

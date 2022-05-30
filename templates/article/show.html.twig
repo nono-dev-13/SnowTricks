@@ -23,6 +23,44 @@
             </div>
         </div>
     </div>
+
+    {% if article.comments is not empty %}
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            <h4>Liste des commentaires</H4>
+            {% for comment in article.comments %}
+            <div class="mb-5">
+                <div class="d-flex flex-column mb-2">
+                    <strong>{{comment.pseudo | capitalize}}</strong>
+                    <small>{{comment.createdAt | date('d/m/Y')}}</small>
+                </div>
+                <hr>
+                <div>{{comment.content}}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if app.user %}
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            <h4>Ajouter un commentaire</H4>
+            {{form_start(commentForm)}}
+            <div class="form-floating mb-3">
+                {{ form_widget(commentForm.pseudo, {'attr': {'placeholder' : 'Votre pseudo'}}) }}
+                <label for="registration_form_email">Pseudo</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form_widget(commentForm.content, {'attr': {'placeholder' : 'Votre message'}}) }}
+                <label for="registration_form_email">Message</label>
+            </div>
+            {{form_row(commentForm.rgpd)}}
+            <button type="submit" class="btn btn-primary">Envoyer mon commentaire</button>
+            {{form_end(commentForm)}}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

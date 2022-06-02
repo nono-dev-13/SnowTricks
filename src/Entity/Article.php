@@ -33,6 +33,10 @@ class Article
     #[ORM\OneToMany(mappedBy: 'articles', targetEntity: Image::class, cascade:['persist'], orphanRemoval:true)]
     private $images;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -148,6 +152,18 @@ class Article
                 $image->setArticles(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Image;
+use App\Entity\User;
 use App\Form\ArticleType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
+use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -98,8 +101,9 @@ class ArticleController extends AbstractController
         $formArticle->handleRequest($request);
         
         if($formArticle->isSubmitted() and $formArticle->isValid()) {
-            
-            //upload image
+            $article->setUser($this->getUser());
+
+            //upload image  
             $images = $formArticle->get('image')->getData();
             foreach($images as $image) {
                 //génère un nouveau nom de fichier
@@ -140,9 +144,11 @@ class ArticleController extends AbstractController
      * Supprimer un article
      */
     #[Route("/delete-trick/{id}", name: "trick_delete")]
-    public function delete(Article $article, EntityManagerInterface $manager):Response
+    public function delete(Article $article, EntityManagerInterface $manager, ArticleRepository $articleRepository):Response
     {
-        $articles = $manager->getRepository(Article::class)->find($article->getId());
+        $connectedUser = $this->getUser();
+        //if ($connectedUser->getId() == $article->get)
+        $articles = $articleRepository->find($article->getId());
         $manager->remove($articles);
         $manager->flush();
 

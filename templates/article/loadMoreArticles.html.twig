@@ -1,17 +1,42 @@
 {% for article in articles %}
 <div class="col-12 col-md-3 mb-3" id="{{article.id}}">
 	<div class="card">
-		<img src="..." class="card-img-top" alt="...">
+		{% if article.images|length > 0 %}
+		<img src="{{asset('/uploads/' ~ article.images[0].name)}}" class="card-img-top" alt="image">
+		{% endif %}
 		<div class="card-body">
 			<h5 class="card-title">{{article.name}}</h5>
+			{% if app.user %}
 			<div class="action">
-				<a href="#">
+				<a href="{{ path('trick_edit', {id : article.id}) }}">
 					<i class="fas fa-pencil-alt"></i>
 				</a>
-				<a href="#">
-					<i class="fas fa-trash-alt"></i>
-				</a>
+				<p data-bs-toggle="modal" data-bs-target="#modalDelete{{article.id}}">
+					<i class=" fas fa-trash-alt"></i>
+				</p>
+
+				<!-- Modal -->
+				<div class="modal fade" id="modalDelete{{article.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								Êtes vous sur de vouloir supprimer l'article <strong>{{article.name}}</strong>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+								<a href="{{ path('trick_delete', {id : article.id}) }}" type="button"
+									class="btn btn-primary">Oui je suis sur</a>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>

@@ -18,9 +18,11 @@
 
         {% if editMode %}
         {{form_row(formArticle.image, {'required' : false})}}
+        {% else %}
+        {{form_row(formArticle.image)}}
         {% endif %}
 
-        {{form_row(formArticle.image)}}
+
 
         {% if editMode %}
         <div class="mb-5">
@@ -28,7 +30,7 @@
             <div class="d-flex">
                 {% for image in article.image %}
                 <div>
-                    <img src="{{asset('/uploads' ~image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
+                    <img src="{{asset('/uploads/' ~image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
                 </div>
                 {% endfor %}
             </div>

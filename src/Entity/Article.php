@@ -27,10 +27,10 @@ class Article
     #[ORM\Column(type: 'datetime_immutable', nullable:true)]
     private $modifiedAt;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, orphanRemoval:true)]
     private $comments;
 
-    #[ORM\OneToMany(mappedBy: 'articles', targetEntity: Image::class, cascade:['persist'], orphanRemoval:true)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Image::class, cascade:['persist'], orphanRemoval:true)]
     private $images;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
@@ -138,7 +138,7 @@ class Article
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
-            $image->setArticles($this);
+            $image->setArticle($this);
         }
 
         return $this;
@@ -148,8 +148,8 @@ class Article
     {
         if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
-            if ($image->getArticles() === $this) {
-                $image->setArticles(null);
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
             }
         }
 

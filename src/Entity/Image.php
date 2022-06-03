@@ -17,7 +17,7 @@ class Image
     private $name;
 
     #[ORM\ManyToOne(targetEntity: Article::class, inversedBy: 'images')]
-    private $articles;
+    private $article;
 
     public function getId(): ?int
     {
@@ -36,14 +36,14 @@ class Image
         return $this;
     }
 
-    public function getArticles(): ?Article
+    public function getArticle(): ?Article
     {
-        return $this->articles;
+        return $this->article;
     }
 
-    public function setArticles(?Article $articles): self
+    public function setArticle(?Article $article): self
     {
-        $this->articles = $articles;
+        $this->article = $article;
 
         return $this;
     }

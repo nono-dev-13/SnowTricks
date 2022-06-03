@@ -61,7 +61,7 @@ class ArticleController extends AbstractController
      * Montre un article
      */
     #[Route("/show/{id}", name: "trick_show", requirements: ['id' => '\d+'])]
-    public function show(Article $article,EntityManagerInterface $manager, Request $request)
+    public function show(Article $article, EntityManagerInterface $manager, Request $request)
     {
 
         //Commentaires
@@ -146,13 +146,22 @@ class ArticleController extends AbstractController
     #[Route("/delete-trick/{id}", name: "trick_delete")]
     public function delete(Article $article, EntityManagerInterface $manager, ArticleRepository $articleRepository):Response
     {
+        /**
+         * @var User
+         */
         $connectedUser = $this->getUser();
-        //if ($connectedUser->getId() == $article->get)
-        $articles = $articleRepository->find($article->getId());
-        $manager->remove($articles);
-        $manager->flush();
-
-        $this->addFlash('success', 'Votre article à bien été supprimé');
-        return $this->redirectToRoute('home');
+        
+        if ($connectedUser->getId() == $article->getUser()->getId()) {
+            $article = $articleRepository->find($article->getId());
+            $manager->remove($article);
+            $manager->flush();
+    
+            $this->addFlash('success', 'Votre article à bien été supprimé');
+            return $this->redirectToRoute('home');
+        } else {
+            $this->addFlash('error', "Vous n'êtes pas autorisé à supprimer cet article car vous n'êtes pas l'auteur");
+            return $this->redirectToRoute('home');
+        }
+        
     }
 }

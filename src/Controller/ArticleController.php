@@ -6,9 +6,10 @@ use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Image;
 use App\Entity\User;
-use App\Form\ArticleType;
+use App\Form\ArticleFormType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
@@ -91,17 +92,24 @@ class ArticleController extends AbstractController
      */
     #[Route("/trick/new", name: "trick_create")]
     #[Route("/trick/{id}/edit", name: "trick_edit")]
-    public function formArticle(Request $request, EntityManagerInterface $manager, Article $article=null)
+    public function formArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
     {
         if(!$article){
             $article = new Article();
         }
 
-        $formArticle = $this->createForm(ArticleType::class, $article);
+        $formArticle = $this->createForm(ArticleFormType::class, $article);
         $formArticle->handleRequest($request);
         
         if($formArticle->isSubmitted() and $formArticle->isValid()) {
-            $article->setUser($this->getUser());
+            //$article->setUser($this->getUser());
+            
+            //categories
+            $categories = $request->get('article_form')['categories'];
+            foreach ($categories as $category_id) {
+                $category = $categoryRepository->find($category_id);
+                $article->addCategory($category);
+            }
 
             //upload image  
             $images = $formArticle->get('image')->getData();

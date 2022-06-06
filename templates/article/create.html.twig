@@ -33,6 +33,8 @@
                 {% for image in article.images %}
                 <div>
                     <img src="{{asset('/uploads/' ~ image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
+                    <p><a href="{{ path('trick_delete_image', {'id':image.id}) }}" data-delete
+                            data-token="{{ csrf_token('delete' ~ image.id ) }}">supprimer</a></p>
                 </div>
                 {% endfor %}
 

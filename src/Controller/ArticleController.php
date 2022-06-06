@@ -111,7 +111,7 @@ class ArticleController extends AbstractController
 
                 //copie le fichier dans uploads
                 $image->move(
-                    $this->getParameter('images-directory'),
+                    $this->getParameter('images_directory'),
                     $fichier
                 );
 
@@ -149,8 +149,11 @@ class ArticleController extends AbstractController
         /**
          * @var User
          */
+
+        //récupère l'utilisateur connecté (via symfony) 
         $connectedUser = $this->getUser();
         
+        //supprime l'article uniquement celui du user
         if ($connectedUser->getId() == $article->getUser()->getId()) {
             $article = $articleRepository->find($article->getId());
             $manager->remove($article);
@@ -163,5 +166,30 @@ class ArticleController extends AbstractController
             return $this->redirectToRoute('home');
         }
         
+    }
+
+    /**
+     * Supprimer une image dans editer artice
+     */
+    #[Route("/delete/image/{id}", name: "trick_delete_image", methods:"DELETE")]
+    public function deleteImage(Image $image, EntityManagerInterface $manager, Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        //on vérifie si le token est valide
+        if ($this->isCsrfTokenValid('delete' . $image->getId(), $data['_token'])) {
+            $nom = $image->getName();
+            //on supprime le fichier
+            unlink($this->getParameter('images_directory') . '/' . $nom);
+            // on supprime de la base
+            //$em = $this->getDoctrine()->getManager();
+            $manager->remove($image);
+            $manager->flush();
+
+            //on repond en json
+            return new JsonResponse(['success' => 1]);
+        } else {
+            return new JsonResponse(['error' => 'token Invalide'], 400);
+        }
     }
 }

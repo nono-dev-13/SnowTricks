@@ -10,6 +10,7 @@ use App\Form\ArticleFormType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
@@ -83,8 +84,25 @@ class ArticleController extends AbstractController
 
         return $this->render('article/show.html.twig', [
             'article'=> $article,
+            'comment' => $comment,
             'commentForm' => $commentForm->createView(),
         ]);
+    }
+
+    /**
+     * Supprimer un commentaire
+     */
+    #[Route("/delete-comment/{id}", name: "comment_delete", requirements: ['id' => '\d+'])]
+    public function deleteComment(Article $article, Comment $comment, EntityManagerInterface $manager, CommentRepository $commentRepository):Response
+    {
+        
+            $comment = $commentRepository->find($comment->getId());
+            $manager->remove($comment);
+            $manager->flush();
+    
+            $this->addFlash('success', 'Votre commentaire à bien été supprimé');
+            return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+        
     }
 
     /**

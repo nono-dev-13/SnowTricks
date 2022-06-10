@@ -3,7 +3,6 @@
 {% block title %}Liste des tricks{% endblock %}
 
 {% block body %}
-<div class="background"></div>
 <div class="container">
     <div class="row">
         {% for message in app.flashes('success') %}
@@ -11,24 +10,84 @@
             {{ message }}
         </div>
         {% endfor %}
+
+        {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
-    <div class="row mt-300">
-        <div class="col-12">
-            <div class="p-5 mb-4 rounded-5 bg-dark">
-                <div class="container-fluid py-5">
-                    <h1 class="display-5 fw-bold">{{article.name | capitalize}}</h1>
-                    <p class="col-md-8 fs-4">{{article.description | capitalize}}
-                    </p>
+    <div>
+        <div class="img-top">
+            {% if article.images|length > 0 %}
+            <img src="{{asset('/uploads/' ~ article.images[0].name)}}" alt="image">
+            {% endif %}
+
+            <div class="rounded-5 title">
+                <h1 class="display-5 fw-bold">{{article.name | capitalize}}</h1>
+            </div>
+
+            {% if app.user %}
+            <div class="action">
+                <a href="{{ path('trick_edit', {id : article.id}) }}" class="me-3">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <p data-bs-toggle="modal" data-bs-target="#modalDelete{{article.id}}">
+                    <i class=" fas fa-trash-alt"></i>
+                </p>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalDelete{{article.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Êtes vous sur de vouloir supprimer l'article <strong>{{article.name}}</strong>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                                <a href="{{ path('trick_delete', {id : article.id}) }}" type="button"
+                                    class="btn btn-primary">Oui je suis sur</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 
+
+    <div class="row">
+        <div class="col-12">
+            <div class="item-list mb-3">
+                {% for image in article.images %}
+                <div>
+                    <img src="{{asset('/uploads/' ~ image.name)}}" alt="image">
+                    <p><a href="{{ path('trick_delete_image', {'id':image.id}) }}" data-delete
+                            data-token="{{ csrf_token('delete' ~ image.id ) }}">supprimer</a></p>
+                </div>
+                {% endfor %}
+            </div>
+            <p class="col-md-8 fs-4 mb-5">{{article.description | capitalize}}</p>
+            <div class="col-12 mb-5 text-center">
+                {% for category in article.categories %}
+                <span class="badge bg-info">{{category.name}}</span>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
     {% if article.comments is not empty %}
     <div class="row">
         <div class="col-12 col-lg-6 offset-lg-3">
             <h4>Liste des commentaires</H4>
             {% for comment in article.comments %}
+
             <div class="mb-5">
                 <div class="d-flex flex-column mb-2">
                     <strong>{{comment.pseudo | capitalize}}</strong>
@@ -41,7 +100,6 @@
         </div>
     </div>
     {% endif %}
-
     {% if app.user %}
     <div class="row">
         <div class="col-12 col-lg-6 offset-lg-3">
@@ -55,9 +113,9 @@
                 {{ form_widget(commentForm.content, {'attr': {'placeholder' : 'Votre message'}}) }}
                 <label for="registration_form_email">Message</label>
             </div>
-            {{form_row(commentForm.rgpd)}}
             <button type="submit" class="btn btn-primary">Envoyer mon commentaire</button>
             {{form_end(commentForm)}}
+
         </div>
     </div>
     {% endif %}

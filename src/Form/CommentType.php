@@ -17,7 +17,6 @@ class CommentType extends AbstractType
         $builder
             ->add('pseudo', TextType::class)
             ->add('content', TextareaType::class)
-            ->add('rgpd', CheckboxType::class)
         ;
     }
 

@@ -27,21 +27,63 @@
             }
         }
     } 
-} 
+}
+
+.img-top {
+    position: relative;
+
+    img {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .title {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.5);
+        color: #000000;
+        font-size: 45px;
+        text-align: center;
+        padding: 30px;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .action {
+        position: absolute;
+        padding: 5px 15px;
+        background-color: #FFFFFF;
+        right: 10px;
+        top: 10px;
+        display: flex;
+
+        a,p {
+            color: #000000;
+            cursor: pointer;
+        }
+    }
+}
+
+.item-list {
+    overflow-x: scroll;
+    white-space: nowrap;
+
+    div {
+        display: inline-block;
+
+        img {
+            max-width: 250px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+        }
+
+        a {
+            display: block;
+        }
+    }
+}
 
 .none {
     display: none;
-}
-
-.background {
-    background-image: url("../images/img_top.jpeg");
-    background-repeat: no-repeat;
-    width: 100%;
-    min-height: 600px;
-    background-size: cover;
-    position: absolute;
-    z-index: -1;
-    left: 0;
 }
 
 .mt-300 {

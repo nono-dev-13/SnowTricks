@@ -16,10 +16,11 @@
 	{% endfor %}
 </div>
 <div class="mb-4">
-	<img src="{{ asset('build/images/img_top.jpeg') }}" class="w-100" />
+	<img src="{{ asset('build/images/img_top.jpg') }}" class="w-100" />
 </div>
 <div class="container">
 	<div class="row" id="articleList">
+
 		{% for article in listArticles %}
 		<div class="col-12 col-md-3 mb-3" id="{{article.id}}">
 			<div class="card">

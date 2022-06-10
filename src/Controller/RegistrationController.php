@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -41,6 +42,19 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+
+            //upload image  
+            $image = $form->get('avatar')->getData();
+            $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+            //copie le fichier dans uploads
+            $image->move(
+                $this->getParameter('images_directory'),
+                $fichier
+            );
+
+            //on stock l'image en bdd (son nom)
+            $user->setAvatar($fichier);
 
             $entityManager->persist($user);
             $entityManager->flush();

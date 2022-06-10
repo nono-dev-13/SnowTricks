@@ -74,6 +74,7 @@ class ArticleController extends AbstractController
         if($commentForm->isSubmitted() && $commentForm->isValid()){
             $comment->setCreatedAt(new \DateTimeImmutable());
             $comment->setArticle($article);
+            $comment->setUser($this->getUser());
 
             $manager->persist($comment);
             $manager->flush();
@@ -112,6 +113,7 @@ class ArticleController extends AbstractController
     #[Route("/trick/{id}/edit", name: "trick_edit")]
     public function formArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
     {
+
         if(!$article){
             $article = new Article();
         }
@@ -119,45 +121,60 @@ class ArticleController extends AbstractController
         $formArticle = $this->createForm(ArticleFormType::class, $article);
         $formArticle->handleRequest($request);
         
+        /**
+         * récupère l'utilisateur connecté (via symfony) 
+         * @var User
+         */
+        $connectedUser = $this->getUser();
+        
+        //modifie l'article uniquement celui du user
+        
         if($formArticle->isSubmitted() and $formArticle->isValid()) {
             //$article->setUser($this->getUser());
-            
-            //categories
-            $categories = $request->get('article_form')['categories'];
-            foreach ($categories as $category_id) {
-                $category = $categoryRepository->find($category_id);
-                $article->addCategory($category);
-            }
+            if ($connectedUser->getId() == $article->getUser()->getId()) {
+                //categories
+                $categories = $request->get('article_form')['categories'];
+                foreach ($categories as $category_id) {
+                    $category = $categoryRepository->find($category_id);
+                    $article->addCategory($category);
+                }
 
-            //upload image  
-            $images = $formArticle->get('image')->getData();
-            foreach($images as $image) {
-                //génère un nouveau nom de fichier
-                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+                //upload image  
+                $images = $formArticle->get('image')->getData();
+                foreach($images as $image) {
+                    //génère un nouveau nom de fichier
+                    $fichier = md5(uniqid()) . '.' . $image->guessExtension();
 
-                //copie le fichier dans uploads
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
+                    //copie le fichier dans uploads
+                    $image->move(
+                        $this->getParameter('images_directory'),
+                        $fichier
+                    );
 
-                //on stock l'image en bdd (son nom)
-                $img = new Image();
-                $img->setName($fichier);
-                $article->addImage($img);
-            }
+                    //on stock l'image en bdd (son nom)
+                    $img = new Image();
+                    $img->setName($fichier);
+                    $article->addImage($img);
+                }
 
-            if(!$article->getId()) {
-                $article->setCreatedAt(new \DateTimeImmutable());
-            }
-            
-            $manager->persist($article);
-            $manager->flush();
+                if(!$article->getId()) {
+                    $article->setCreatedAt(new \DateTimeImmutable());
+                }
 
-            $this->addFlash('success', 'Votre nouvelle article à bien été crée');
+                $manager->persist($article);
+                $manager->flush();
 
-            return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+                $this->addFlash('success', 'Votre nouvelle article à bien été crée');
+
+                return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+            } else {
+                $this->addFlash('success', 'Vous ne pouvez pas modifier cet article');
+    
+                return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+            }   
+                
         }
+        
 
         return $this->render('article/create.html.twig', [
             'formArticle'=>$formArticle->createView(),

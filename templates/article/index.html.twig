@@ -30,7 +30,7 @@
 				<div class="card-body">
 					<p class="card-title h5">{{article.name|capitalize}}</p>
 
-					{% if app.user %}
+					{% if app.user and (app.user.id == article.user.id or is_granted("ROLE_ADMIN")) %}
 					<div class="action">
 						<a href="{{ path('trick_edit', {id : article.id}) }}">
 							<i class="fas fa-pencil-alt"></i>

@@ -33,6 +33,9 @@
 			<div class="collapse navbar-collapse justify-content-end" id="navbar">
 				<ul class="navbar-nav">
 					{% if app.user %}
+					<div class="info-user">
+						<img src="{{asset('/uploads/' ~ app.user.avatar)}}" alt="image" style="width: 40px;">
+					</div>
 					<li class="nav-item">
 						<a class="nav-link" href="{{path('trick_create')}}">Créer un article</a>
 					</li>

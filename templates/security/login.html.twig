@@ -8,11 +8,13 @@
     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
+    {#
     {% if app.user %}
     <div class="mb-3">
         You are logged in as {{ app.user.email }}, <a href="{{ path('app_logout') }}">Logout</a>
     </div>
     {% endif %}
+    #}
 
     {% for message in app.flashes('success') %}
     <div class="alert alert-success">{{message}}</div>
@@ -37,8 +39,13 @@
                         placeholder="mot de passe" required>
                     <label for="inputPassword">Mot de passe</label>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                    <div>
+                        <p>Pas encore Inscrit ?</p>
+                        <a href="{{path('app_register')}}">Inscrivez-vous</a>
+                    </div>
+
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

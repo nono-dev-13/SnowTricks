@@ -73,7 +73,7 @@
                 </div>
                 {% endfor %}
             </div>
-            <p class="col-md-8 fs-4 mb-5">{{article.description | capitalize}}</p>
+            <p class="col-12 fs-4 mb-5">{{article.description | capitalize}}</p>
             <div class="col-12 mb-5 text-center">
                 {% for category in article.categories %}
                 <span class="badge bg-info">{{category.name}}</span>
@@ -134,7 +134,13 @@
 
         </div>
     </div>
-    {% endif %}
-</div>
+    {% else %}
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            <p>Pour pouvoir poster un commentaire vous devez vous connecter</p>
+            <a href="{{path('app_login')}}">Se connecter</a>
+            {% endif %}
+        </div>
+    </div>
 
-{% endblock %}
+    {% endblock %}

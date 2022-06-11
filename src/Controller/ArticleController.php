@@ -107,19 +107,82 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * Formulaire pour ajouter ou modifier un article
+     * Formulaire pour ajouter un article
      */
     #[Route("/trick/new", name: "trick_create")]
-    #[Route("/trick/{id}/edit", name: "trick_edit")]
-    public function formArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
+    public function formAddArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
     {
 
         if(!$article){
             $article = new Article();
         }
 
-        $formArticle = $this->createForm(ArticleFormType::class, $article);
-        $formArticle->handleRequest($request);
+        $formAddArticle = $this->createForm(ArticleFormType::class, $article);
+        $formAddArticle->handleRequest($request);
+        
+        //modifie l'article uniquement celui du user
+        
+        if($formAddArticle->isSubmitted() and $formAddArticle->isValid()) {
+            
+
+            $categories = $request->get('article_form')['categories'];
+            foreach ($categories as $category_id) {
+                $category = $categoryRepository->find($category_id);
+                $article->addCategory($category);
+            }  
+            
+            $images = $formAddArticle->get('image')->getData();
+            foreach($images as $image) {
+                //génère un nouveau nom de fichier
+                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+                //copie le fichier dans uploads
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+
+                //on stock l'image en bdd (son nom)
+                $img = new Image();
+                $img->setName($fichier);
+                $article->addImage($img);
+            }
+
+            $article->setUser($this->getUser());
+
+            if(!$article->getId()) {
+                $article->setCreatedAt(new \DateTimeImmutable());
+            }
+
+            $manager->persist($article);
+            $manager->flush();
+
+            $this->addFlash('success', 'Votre nouvelle article à bien été crée');
+
+            return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);   
+                
+        }
+        
+        return $this->render('article/create.html.twig', [
+            'formAddArticle'=>$formAddArticle->createView(),
+            'editMode'=> $article->getId()!= null,
+            'article'=> $article,
+        ]);
+    }
+
+    /**
+     * Formulaire pour modifier un article
+     */
+    #[Route("/trick/{id}/edit", name: "trick_edit")]
+    public function formEditArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
+    {
+
+        if(!$article){
+            $article = new Article();
+        }
+
+        $formEditArticle = $this->createForm(ArticleFormType::class, $article);
+        $formEditArticle->handleRequest($request);
         
         /**
          * récupère l'utilisateur connecté (via symfony) 
@@ -129,18 +192,17 @@ class ArticleController extends AbstractController
         
         //modifie l'article uniquement celui du user
         
-        if($formArticle->isSubmitted() and $formArticle->isValid()) {
+        if($formEditArticle->isSubmitted() and $formEditArticle->isValid()) {
             //$article->setUser($this->getUser());
             if ($connectedUser->getId() == $article->getUser()->getId()) {
-                //categories
+                
                 $categories = $request->get('article_form')['categories'];
                 foreach ($categories as $category_id) {
                     $category = $categoryRepository->find($category_id);
                     $article->addCategory($category);
-                }
-
-                //upload image  
-                $images = $formArticle->get('image')->getData();
+                }  
+                
+                $images = $formEditArticle->get('image')->getData();
                 foreach($images as $image) {
                     //génère un nouveau nom de fichier
                     $fichier = md5(uniqid()) . '.' . $image->guessExtension();
@@ -176,8 +238,8 @@ class ArticleController extends AbstractController
         }
         
 
-        return $this->render('article/create.html.twig', [
-            'formArticle'=>$formArticle->createView(),
+        return $this->render('article/edit.html.twig', [
+            'formEditArticle'=>$formEditArticle->createView(),
             'editMode'=> $article->getId()!= null,
             'article'=> $article,
         ]);

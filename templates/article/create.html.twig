@@ -5,47 +5,17 @@
 {% block body %}
 <div class="container">
     <div class="row mt-5">
-        {% if editMode %}
-        <h1 class="mb-3">Modification d'un tricks</h1>
-        {% else %}
         <h1 class="mb-3">Création d'un tricks</h1>
-        {% endif %}
+        {{form_start(formAddArticle)}}
 
-        {{form_start(formArticle)}}
+        {{form_row(formAddArticle.name)}}
+        {{form_row(formAddArticle.description)}}
+        {{form_row(formAddArticle.categories)}}
+        {{form_row(formAddArticle.image)}}
 
-        {{form_row(formArticle.name)}}
-        {{form_row(formArticle.description)}}
-        {{form_row(formArticle.categories)}}
-
-        {% if editMode %}
-        {{form_row(formArticle.image, {'required' : false})}}
-        {% else %}
-        {{form_row(formArticle.image)}}
-        {% endif %}
-
-
-
-        {% if editMode %}
-        <div class="mb-5">
-            <h4>Images</h4>
-            <div class="d-flex">
-                {% for image in article.images %}
-                <div>
-                    <img src="{{asset('/uploads/' ~ image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
-                    <p><a href="{{ path('trick_delete_image', {'id':image.id}) }}" data-delete
-                            data-token="{{ csrf_token('delete' ~ image.id ) }}">supprimer</a></p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Modifier l'article</button>
-
-        {% else %}
         <button type="submit" class="btn btn-primary">Ajouter l'article</button>
 
-        {% endif %}
-
-        {{form_end(formArticle)}}
+        {{form_end(formAddArticle)}}
     </div>
 </div>
 

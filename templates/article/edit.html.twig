@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter votre propre tricks{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row mt-5">
+        <h1 class="mb-3">Modification d'un tricks</h1>
+
+        {{form_start(formEditArticle)}}
+
+        {{form_row(formEditArticle.name)}}
+        {{form_row(formEditArticle.description)}}
+        {{form_row(formEditArticle.categories)}}
+        {{form_row(formEditArticle.image, {'required' : false})}}
+
+        <div class="mb-5">
+            <h4>Images</h4>
+            <div class="d-flex">
+                {% for image in article.images %}
+                <div>
+                    <img src="{{asset('/uploads/' ~ image.name)}}" alt="image" style="width: 150px; margin-right:10px;">
+                    <p><a href="{{ path('trick_delete_image', {'id':image.id}) }}" data-delete
+                            data-token="{{ csrf_token('delete' ~ image.id ) }}">supprimer</a></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier l'article</button>
+
+        {{form_end(formEditArticle)}}
+    </div>
+</div>
+
+{% endblock %}

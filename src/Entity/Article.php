@@ -40,11 +40,15 @@ class Article
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'article')]
     private $categories;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Video::class, orphanRemoval:true)]
+    private $videos;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -194,6 +198,36 @@ class Article
     {
         if ($this->categories->removeElement($category)) {
             $category->removeArticle($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Video>
+     */
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(Video $video): self
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos[] = $video;
+            $video->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(Video $video): self
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getArticle() === $this) {
+                $video->setArticle(null);
+            }
         }
 
         return $this;

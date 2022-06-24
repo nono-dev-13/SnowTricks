@@ -12,6 +12,7 @@ use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
+use App\Repository\VideoRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -110,7 +111,7 @@ class ArticleController extends AbstractController
      * Formulaire pour ajouter un article
      */
     #[Route("/trick/new", name: "trick_create")]
-    public function formAddArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository)
+    public function formAddArticle(Request $request, EntityManagerInterface $manager, Article $article=null, CategoryRepository $categoryRepository, VideoRepository $videoRepository)
     {
 
         if(!$article){
@@ -123,13 +124,12 @@ class ArticleController extends AbstractController
         //modifie l'article uniquement celui du user
         
         if($formAddArticle->isSubmitted() and $formAddArticle->isValid()) {
-            
 
             $categories = $request->get('article_form')['categories'];
             foreach ($categories as $category_id) {
                 $category = $categoryRepository->find($category_id);
                 $article->addCategory($category);
-            }  
+            }
             
             $images = $formAddArticle->get('image')->getData();
             foreach($images as $image) {
@@ -194,7 +194,8 @@ class ArticleController extends AbstractController
         
         if($formEditArticle->isSubmitted() and $formEditArticle->isValid()) {
             //$article->setUser($this->getUser());
-            if ($connectedUser->getId() == $article->getUser()->getId()) {
+
+            if ($connectedUser->getId() == $article->getUser()->getId() || $connectedUser->getRoles(["ROLE_ADMIN"])) {
                 
                 $categories = $request->get('article_form')['categories'];
                 foreach ($categories as $category_id) {
@@ -226,11 +227,12 @@ class ArticleController extends AbstractController
                 $manager->persist($article);
                 $manager->flush();
 
-                $this->addFlash('success', 'Votre nouvelle article à bien été crée');
+                $this->addFlash('success', 'Votre nouvelle article à bien été modifié');
 
                 return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+            
             } else {
-                $this->addFlash('success', 'Vous ne pouvez pas modifier cet article');
+                $this->addFlash('error', 'Vous ne pouvez pas modifier cet article');
     
                 return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
             }   

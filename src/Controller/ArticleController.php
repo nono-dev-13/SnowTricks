@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Image;
 use App\Entity\User;
+use App\Entity\Video;
 use App\Form\ArticleFormType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
@@ -14,6 +16,7 @@ use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use App\Repository\VideoRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -116,6 +119,7 @@ class ArticleController extends AbstractController
 
         if(!$article){
             $article = new Article();
+            $article->addVideo((new Video()));
         }
 
         $formAddArticle = $this->createForm(ArticleFormType::class, $article);
@@ -125,6 +129,15 @@ class ArticleController extends AbstractController
         
         if($formAddArticle->isSubmitted() and $formAddArticle->isValid()) {
 
+            //$videos = $request->get('article_form')['videos'];
+            $videos = new ArrayCollection();
+            foreach ($article->getVideos() as $video) {
+                $video = str_replace("watch?v=", "embed/", $video->getUrl(), $count);
+                dump($video);
+                die();
+                $videos->add($video);
+            }
+            
             $categories = $request->get('article_form')['categories'];
             foreach ($categories as $category_id) {
                 $category = $categoryRepository->find($category_id);

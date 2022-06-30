@@ -40,7 +40,7 @@ class Article
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'article')]
     private $categories;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Video::class, orphanRemoval:true)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Video::class, cascade:['persist'], orphanRemoval:true)]
     private $videos;
 
     public function __construct()

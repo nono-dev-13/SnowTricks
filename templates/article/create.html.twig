@@ -6,6 +6,7 @@
 <div class="container">
     <div class="row mt-5">
         <h1 class="mb-3">Création d'un tricks</h1>
+
         {{form_start(formAddArticle)}}
 
         {{form_row(formAddArticle.name)}}
@@ -13,8 +14,27 @@
         {{form_row(formAddArticle.categories)}}
         {{form_row(formAddArticle.image)}}
 
-        <button type="submit" class="btn btn-primary">Ajouter l'article</button>
 
+        <div class="mb-3">
+
+
+            <div id="video-fields-list" data-prototype="{{ form_widget(formAddArticle.videos.vars.prototype)|e }}"
+                data-widget-tags="{{ '<div></div>'|e }}" data-widget-counter="{{ formAddArticle.videos|length }}">
+                {% for videoField in formAddArticle.videos %}
+                <div>
+                    {{ form_errors(videoField) }}
+                    {{ form_widget(videoField) }}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="add-another-collection-widget btn btn-secondary mb-3"
+                data-list-selector="#video-fields-list">
+                Ajouter une video</button>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Ajouter l'article</button>
+        </div>
         {{form_end(formAddArticle)}}
     </div>
 </div>

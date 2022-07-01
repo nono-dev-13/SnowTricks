@@ -128,15 +128,29 @@ class ArticleController extends AbstractController
         //modifie l'article uniquement celui du user
         
         if($formAddArticle->isSubmitted() and $formAddArticle->isValid()) {
-
-            //$videos = $request->get('article_form')['videos'];
-            $videos = new ArrayCollection();
-            foreach ($article->getVideos() as $video) {
-                $video = str_replace("watch?v=", "embed/", $video->getUrl(), $count);
-                dump($video);
-                die();
-                $videos->add($video);
+            // si  le permier champs n'est pas rempli alors on ne l'enregistre pas en bdd
+            $listVideos = $article->getVideos();
+            $firstVideo = $listVideos[0];
+            
+            if(empty($firstVideo->getUrl())){
+                $article->removeVideo($firstVideo);
             }
+            
+            
+            //$videos = $request->get('article_form')['videos'];
+            //$videos = new ArrayCollection();
+            foreach ($article->getVideos() as $video) {
+                //on remplace le permier params
+                $url = str_replace("watch?v=", "embed/", $video->getUrl());
+                //on enlève tout ce qu'il y a après le &
+                $url = strstr($url, '&', true);
+                $video->setUrl($url);
+
+                //$video = parse_url($video->getUrl());
+                //$video = parse_str( parse_url( $video->getUrl(), PHP_URL_QUERY ), $link );
+                //$videos->add($video);
+            }
+            
             
             $categories = $request->get('article_form')['categories'];
             foreach ($categories as $category_id) {
@@ -210,6 +224,17 @@ class ArticleController extends AbstractController
 
             if ($connectedUser->getId() == $article->getUser()->getId() || $connectedUser->getRoles(["ROLE_ADMIN"])) {
                 
+                foreach ($article->getVideos() as $video) {
+                    if (!empty($video->getUrl())) {
+                        //on remplace le permier params
+                        $url = str_replace("watch?v=", "embed/", $video->getUrl());
+                        //on enlève tout ce qu'il y a après le &
+                        $url = strstr($url, '&', true);
+                        $video->setUrl($url);
+                    }
+                    
+                }
+
                 $categories = $request->get('article_form')['categories'];
                 foreach ($categories as $category_id) {
                     $category = $categoryRepository->find($category_id);

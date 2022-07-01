@@ -14,6 +14,21 @@
         {{form_row(formEditArticle.categories)}}
         {{form_row(formEditArticle.image, {'required' : false})}}
 
+        <div class="mb-3">
+            <div id="video-fields-list" data-prototype="{{ form_widget(formEditArticle.videos.vars.prototype)|e }}"
+                data-widget-tags="{{ '<div></div>'|e }}" data-widget-counter="{{ formEditArticle.videos|length }}">
+                {% for videoField in formEditArticle.videos %}
+                <div>
+                    {{ form_errors(videoField) }}
+                    {{ form_widget(videoField) }}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="add-another-collection-widget btn btn-secondary mb-3"
+                data-list-selector="#video-fields-list">
+                Ajouter une video</button>
+        </div>
+
         <div class="mb-5">
             <h4>Images</h4>
             <div class="d-flex">

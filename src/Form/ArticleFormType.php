@@ -44,6 +44,7 @@ class ArticleFormType extends AbstractType
             ->add('videos', CollectionType::class, [
                 'entry_type' => VideoType::class,
                 'allow_add' => true,
+                'required' => false,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'prototype' => true,

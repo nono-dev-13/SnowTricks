@@ -19,6 +19,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,7 +68,7 @@ class ArticleController extends AbstractController
      * Montre un article
      */
     #[Route("/show/{id}", name: "trick_show", requirements: ['id' => '\d+'])]
-    public function show(Article $article, EntityManagerInterface $manager, Request $request)
+    public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request)
     {
 
         //Commentaires
@@ -86,11 +87,27 @@ class ArticleController extends AbstractController
             $this->addFlash('success', 'Votre commentaire à bien été envoyé');
             return $this->redirectToRoute('trick_show', ['id' => $article->getId()]);
         }
+        
+        //$sql   = "SELECT * FROM comment WHERE comment.article_id = :id";
 
+        $qb = $manager->createQueryBuilder();
+
+        $query = $qb->select('c')
+        -> from(Comment::class, 'c')
+        ->where('c.article = ?1')
+        ->setParameter(1,$article->getId());
+
+        $pagination = $paginator->paginate(
+            $query, 
+            $request->query->getInt('page', 1), /*page number*/
+            2 /*limit per page*/
+        );
+    
         return $this->render('article/show.html.twig', [
             'article'=> $article,
             'comment' => $comment,
             'commentForm' => $commentForm->createView(),
+            'pagination' => $pagination,
         ]);
     }
 

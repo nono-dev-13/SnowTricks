@@ -90,7 +90,7 @@
     <div class="row">
         <div class="col-12 col-lg-6 offset-lg-3">
             <h4>Liste des commentaires</H4>
-            {% for comment in article.comments %}
+            {% for comment in pagination %}
             <div class="mb-5">
                 <div class="d-flex align-items-center mb-2 info-user">
                     <div class="me-2">
@@ -105,6 +105,11 @@
                 <div>{{comment.content}}</div>
             </div>
             {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            {{ knp_pagination_render(pagination) }}
         </div>
     </div>
     {% else %}

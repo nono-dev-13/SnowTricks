@@ -68,7 +68,7 @@ class ArticleController extends AbstractController
      * Montre un article
      */
     #[Route("/show/{id}", name: "trick_show", requirements: ['id' => '\d+'])]
-    public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request)
+    public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository)
     {
 
         //Commentaires
@@ -87,21 +87,11 @@ class ArticleController extends AbstractController
             $this->addFlash('success', 'Votre commentaire à bien été envoyé');
             return $this->redirectToRoute('trick_show', ['id' => $article->getId()]);
         }
+
+        $page = $request->query->getInt('page', 1);
+        //pagination
+        $pagination = $commentRepository->getPagination($article->getId(),$page);
         
-        //$sql   = "SELECT * FROM comment WHERE comment.article_id = :id";
-
-        $qb = $manager->createQueryBuilder();
-
-        $query = $qb->select('c')
-        -> from(Comment::class, 'c')
-        ->where('c.article = ?1')
-        ->setParameter(1,$article->getId());
-
-        $pagination = $paginator->paginate(
-            $query, 
-            $request->query->getInt('page', 1), /*page number*/
-            2 /*limit per page*/
-        );
     
         return $this->render('article/show.html.twig', [
             'article'=> $article,

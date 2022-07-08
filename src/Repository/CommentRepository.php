@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @method Comment|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,9 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CommentRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Comment::class);
+        $this->paginator = $paginator;
     }
 
     /**
@@ -43,6 +48,24 @@ class CommentRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function getPagination($idArticle, $page)
+    {
+        $qb = $this->_em->createQueryBuilder();
+
+        $query = $qb->select('c')
+        ->from(Comment::class, 'c')
+        ->where('c.article = ?1')
+        ->setParameter(1,$idArticle);
+
+        $pagination = $this->paginator->paginate(
+            $query, 
+            $page, /*page number*/
+            2 /*limit per page*/
+        );
+
+        return $pagination;
     }
 
     // /**

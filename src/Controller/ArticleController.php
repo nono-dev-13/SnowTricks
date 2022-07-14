@@ -307,7 +307,7 @@ class ArticleController extends AbstractController
         $connectedUser = $this->getUser();
         
         //supprime l'article uniquement celui du user
-        if ($connectedUser->getId() == $article->getUser()->getId()) {
+        if ($connectedUser->getId() == $article->getUser()->getId() || $connectedUser->getRoles(["ROLE_ADMIN"])) {
             $article = $articleRepository->find($article->getId());
             $manager->remove($article);
             $manager->flush();

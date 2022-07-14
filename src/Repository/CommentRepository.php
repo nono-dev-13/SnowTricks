@@ -57,6 +57,7 @@ class CommentRepository extends ServiceEntityRepository
         $query = $qb->select('c')
         ->from(Comment::class, 'c')
         ->where('c.article = ?1')
+        ->orderBy('c.createdAt','DESC')
         ->setParameter(1,$idArticle);
 
         $pagination = $this->paginator->paginate(

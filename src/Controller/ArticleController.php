@@ -149,15 +149,16 @@ class ArticleController extends AbstractController
             foreach ($article->getVideos() as $video) {
                 //on remplace le permier params
                 $url = str_replace("watch?v=", "embed/", $video->getUrl());
+                
                 //on enlève tout ce qu'il y a après le &
-                $url = strstr($url, '&', true);
+                //$url = strstr($url, '&', true);
+                
                 $video->setUrl($url);
 
                 //$video = parse_url($video->getUrl());
                 //$video = parse_str( parse_url( $video->getUrl(), PHP_URL_QUERY ), $link );
                 //$videos->add($video);
             }
-            
             
             $categories = $request->get('article_form')['categories'];
             foreach ($categories as $category_id) {
@@ -236,7 +237,7 @@ class ArticleController extends AbstractController
                         //on remplace le permier params
                         $url = str_replace("watch?v=", "embed/", $video->getUrl());
                         //on enlève tout ce qu'il y a après le &
-                        $url = strstr($url, '&', true);
+                        //$url = strstr($url, '&', true);
                         $video->setUrl($url);
                     }
                     

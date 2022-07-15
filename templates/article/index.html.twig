@@ -23,6 +23,7 @@
 	<div class="row" id="articleList">
 
 		{% for article in listArticles %}
+
 		<div class="col-12 col-md-3 mb-3" id="{{article.id}}">
 			<div class="card">
 				{% if article.images|length > 0 %}
@@ -65,7 +66,7 @@
 					{% endif %}
 				</div>
 				<div class="card-footer">
-					<a href="{{ path('trick_show', {id : article.id}) }}" class="btn btn-primary">
+					<a href="{{ path('trick_show', {slug : article.slug}) }}" class="btn btn-primary">
 						Voir plus
 					</a>
 				</div>

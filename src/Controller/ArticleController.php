@@ -21,6 +21,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,10 +68,12 @@ class ArticleController extends AbstractController
     /**
      * Montre un article
      */
-    #[Route("/show/{id}", name: "trick_show", requirements: ['id' => '\d+'])]
-    public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository)
-    {
+    #[Route("/show/{slug}", name: "trick_show", requirements: ['slug' => '[a-z0-9\-]*'])]
+    //public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository, string $slug)
+    public function show(ArticleRepository $articleRepository, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository, string $slug)
 
+    {
+        $article = $articleRepository->findBySlug($request->get('slug'));
         //Commentaires
         $comment = new Comment();
         $commentForm = $this->createForm(CommentType::class, $comment);
@@ -85,14 +88,19 @@ class ArticleController extends AbstractController
             $manager->flush();
 
             $this->addFlash('success', 'Votre commentaire à bien été envoyé');
-            return $this->redirectToRoute('trick_show', ['id' => $article->getId()]);
+            //return $this->redirectToRoute('trick_show', ['id' => $article->getId()]);
+
+            if ($article->getSlug() !== $slug){
+                return $this->redirectToRoute('trick_show',[
+                    'slug' => $article->getSlug(),
+                ], 301);
+            }
         }
 
         $page = $request->query->getInt('page', 1);
         //pagination
         $pagination = $commentRepository->getPagination($article->getId(),$page);
-        
-    
+
         return $this->render('article/show.html.twig', [
             'article'=> $article,
             'comment' => $comment,
@@ -194,7 +202,9 @@ class ArticleController extends AbstractController
 
             $this->addFlash('success', 'Votre nouvelle article à bien été crée');
 
-            return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);   
+            return $this->redirectToRoute('trick_show',[
+                'slug' => $article->getSlug(),
+            ]);
                 
         }
         

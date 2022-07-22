@@ -46,6 +46,9 @@ class Article
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Video::class, cascade:['persist'], orphanRemoval:true)]
     private $videos;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $slug;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -69,11 +72,6 @@ class Article
         $this->name = $name;
 
         return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return (new Slugify())->slugify($this->name);
     }
 
     public function getDescription(): ?string
@@ -237,6 +235,18 @@ class Article
                 $video->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

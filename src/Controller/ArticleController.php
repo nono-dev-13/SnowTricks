@@ -15,6 +15,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use App\Repository\VideoRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -67,13 +68,15 @@ class ArticleController extends AbstractController
 
     /**
      * Montre un article
+     * @return Response
      */
     #[Route("/show/{slug}", name: "trick_show", requirements: ['slug' => '[a-z0-9\-]*'])]
+
     //public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository, string $slug)
-    public function show(ArticleRepository $articleRepository, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository, string $slug)
+    public function show(Article $article, EntityManagerInterface $manager, PaginatorInterface $paginator, Request $request, CommentRepository $commentRepository, $slug) :Response
 
     {
-        $article = $articleRepository->findBySlug($request->get('slug'));
+        //$article = $articleRepository->findBySlug($request->get('slug'));
         //Commentaires
         $comment = new Comment();
         $commentForm = $this->createForm(CommentType::class, $comment);
@@ -192,6 +195,12 @@ class ArticleController extends AbstractController
             }
 
             $article->setUser($this->getUser());
+            
+            //slug
+            $slugify = new Slugify();
+            $slug = $slugify->slugify($article->getName());
+            //$article->setSlug($article->getId() . '_' .$slug);
+            $article->setSlug($slug);
 
             if(!$article->getId()) {
                 $article->setCreatedAt(new \DateTimeImmutable());
@@ -280,17 +289,21 @@ class ArticleController extends AbstractController
                     $article->setCreatedAt(new \DateTimeImmutable());
                 }
 
+                $slugify = new Slugify();
+                $slug = $slugify->slugify($article->getName());
+                $article->setSlug($slug);
+
                 $manager->persist($article);
                 $manager->flush();
 
                 $this->addFlash('success', 'Votre nouvelle article à bien été modifié');
 
-                return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+                return $this->redirectToRoute('trick_show', ['slug'=>$article->getSlug()]);
             
             } else {
                 $this->addFlash('error', 'Vous ne pouvez pas modifier cet article');
     
-                return $this->redirectToRoute('trick_show', ['id'=>$article->getId()]);
+                return $this->redirectToRoute('trick_show', ['slug'=>$article->getSlug()]);
             }   
                 
         }
